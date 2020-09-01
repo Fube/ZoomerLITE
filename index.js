@@ -22,11 +22,20 @@ const sorter = {
     "saturday": 6
 };
 
-const schedule = JSON.parse(readFileSync(PATH));
+const { schedule , offset} = JSON.parse(readFileSync(PATH));
 
 for(const { day, start, link } of schedule){
     
-    const [hour, min] = start.split`:`;
+    let [hour, min] = start.split`:`.map(Number);
+
+    if(offset){
+
+        let foobar = hour*60+min-offset;
+        [hour, min] = [Math.floor(foobar/60), foobar%60];
+    }
+
+    console.log(hour, min);
+
     new CronJob({
 
         cronTime : `00 ${min} ${hour} * * ${sorter[day.toLowerCase()]}`,
